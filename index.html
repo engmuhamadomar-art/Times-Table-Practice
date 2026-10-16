@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Times Table Practice</title>
-    <!-- html2canvas for taking evidence screenshots -->
+    <!-- html2canvas for capturing screenshot evidence -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root {
@@ -192,7 +192,7 @@
             width: 100%;
             max-width: 920px;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             animation: fadeIn 0.3s ease-out;
         }
 
@@ -328,9 +328,10 @@
             gap: 6px;
         }
 
+        /* Native Keyboard Friendly Input Box */
         .q-input {
-            width: 70px;
-            height: 44px;
+            width: 75px;
+            height: 46px;
             text-align: center;
             font-size: 1.35rem;
             font-weight: 800;
@@ -339,14 +340,27 @@
             background: #ffffff;
             color: var(--primary-dark);
             outline: none;
-            cursor: pointer;
             transition: all 0.15s ease;
+            user-select: text;
+            -webkit-user-select: text;
         }
 
-        .q-input.active {
+        .q-input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
             background: var(--primary-light);
+        }
+
+        .q-input.correct {
+            border-color: var(--correct-color);
+            background: var(--correct-bg);
+            color: #15803d;
+        }
+
+        .q-input.incorrect {
+            border-color: var(--incorrect-color);
+            background: var(--incorrect-bg);
+            color: #b91c1c;
         }
 
         .q-mark {
@@ -359,63 +373,7 @@
         .q-mark.tick { color: var(--correct-color); }
         .q-mark.cross { color: var(--incorrect-color); }
 
-        /* -------------------------------------------------------------
-           NATURAL IN-FLOW TOUCH NUMBER PAD (NO OVERLAP)
-        ------------------------------------------------------------- */
-        .numpad-container {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 18px;
-            padding: 16px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .numpad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .np-btn {
-            padding: 14px;
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: #f8fafc;
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text-dark);
-            cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            transition: background 0.1s, transform 0.1s;
-            text-align: center;
-            touch-action: manipulation;
-        }
-
-        .np-btn:active {
-            background: #e2e8f0;
-            transform: scale(0.95);
-        }
-
-        .np-btn.action-bs {
-            background: #fee2e2;
-            color: #991b1b;
-            border-color: #fca5a5;
-        }
-
-        .np-btn.action-next {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #93c5fd;
-            font-size: 1.1rem;
-        }
-
-        /* Bottom Control Action Bar */
+        /* Bottom Action Bar */
         .actions-bar {
             display: flex;
             justify-content: flex-end;
@@ -463,7 +421,7 @@
 
         .btn-restart:hover { background: #475569; }
 
-        /* Keyframe Animations */
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -480,7 +438,7 @@
             #capture-area { padding: 18px 14px; }
             .questions-grid { grid-template-columns: 1fr 1fr; }
             .q-card { padding: 8px 10px; font-size: 1.1rem; }
-            .q-input { width: 58px; height: 38px; font-size: 1.15rem; }
+            .q-input { width: 62px; height: 40px; font-size: 1.15rem; }
             .btn-action { width: 100%; text-align: center; }
             .actions-bar { justify-content: center; }
         }
@@ -529,7 +487,7 @@
 =================================================================== -->
 <div class="quiz-container" id="screen-quiz">
     
-    <!-- Capturable Evidence Area -->
+    <!-- Capturable Evidence Box -->
     <div id="capture-area">
         <div class="quiz-header">
             <div class="student-info">
@@ -542,29 +500,11 @@
         <div class="feedback-banner" id="feedbackBanner"></div>
 
         <div class="questions-grid" id="questionsGrid">
-            <!-- Questions injected here -->
+            <!-- Questions injected dynamically -->
         </div>
     </div>
 
-    <!-- TOUCH NUMBER PAD (Planted naturally in document flow - no fixed sticky overlaps) -->
-    <div class="numpad-container" id="numpad">
-        <div class="numpad-grid">
-            <button type="button" class="np-btn" onclick="pressNum('1')">1</button>
-            <button type="button" class="np-btn" onclick="pressNum('2')">2</button>
-            <button type="button" class="np-btn" onclick="pressNum('3')">3</button>
-            <button type="button" class="np-btn" onclick="pressNum('4')">4</button>
-            <button type="button" class="np-btn" onclick="pressNum('5')">5</button>
-            <button type="button" class="np-btn" onclick="pressNum('6')">6</button>
-            <button type="button" class="np-btn" onclick="pressNum('7')">7</button>
-            <button type="button" class="np-btn" onclick="pressNum('8')">8</button>
-            <button type="button" class="np-btn" onclick="pressNum('9')">9</button>
-            <button type="button" class="np-btn action-bs" onclick="pressBackspace()">⌫</button>
-            <button type="button" class="np-btn" onclick="pressNum('0')">0</button>
-            <button type="button" class="np-btn action-next" onclick="focusNextInput()">Next ➔</button>
-        </div>
-    </div>
-
-    <!-- ACTION BUTTONS BAR -->
+    <!-- BOTTOM ACTION BAR -->
     <div class="actions-bar">
         <button type="button" class="btn-action btn-restart" id="btnRestart" onclick="restartApp()">New Session</button>
         <button type="button" class="btn-action btn-evidence" id="btnEvidence" onclick="downloadEvidence()">📸 Download Evidence</button>
@@ -574,7 +514,6 @@
 
 <script>
     let selectedQuestionCount = 15;
-    let activeInputEl = null;
     let questionsData = [];
     let isChecked = false;
     let studentNameVal = '';
@@ -627,64 +566,43 @@
                 </div>
                 <div class="q-input-wrap">
                     <input type="text" class="q-input" id="input-${i}" 
-                           inputmode="none" readonly 
-                           onclick="setActiveInput(this)" />
+                           inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+                           oninput="cleanInput(this)"
+                           onkeydown="handleKeyDown(event, ${i})" />
                     <span class="q-mark" id="mark-${i}"></span>
                 </div>
             `;
             grid.appendChild(qCard);
         }
 
-        // Auto focus first input cell
-        const firstInput = document.getElementById('input-0');
-        if (firstInput) setActiveInput(firstInput);
+        // Auto focus first question input box
+        setTimeout(() => {
+            const firstInput = document.getElementById('input-0');
+            if (firstInput) firstInput.focus();
+        }, 100);
     }
 
-    function setActiveInput(el) {
-        if (isChecked) return;
-        if (activeInputEl) activeInputEl.classList.remove('active');
-        activeInputEl = el;
-        activeInputEl.classList.add('active');
+    function cleanInput(inputEl) {
+        // Restrict to digits only
+        inputEl.value = inputEl.value.replace(/[^0-9]/g, '');
     }
 
-    /* On-Screen Touch Numpad Actions */
-    function pressNum(digit) {
-        if (!activeInputEl || isChecked) return;
-        if (activeInputEl.value.length < 4) {
-            activeInputEl.value += digit;
-        }
-    }
-
-    function pressBackspace() {
-        if (!activeInputEl || isChecked) return;
-        activeInputEl.value = activeInputEl.value.slice(0, -1);
-    }
-
-    function focusNextInput() {
-        if (!activeInputEl || isChecked) return;
-        const currentIdx = parseInt(activeInputEl.id.replace('input-', ''), 10);
-        const nextIdx = currentIdx + 1;
-        if (nextIdx < selectedQuestionCount) {
-            const nextEl = document.getElementById(`input-${nextIdx}`);
-            if (nextEl) {
-                setActiveInput(nextEl);
-                nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function handleKeyDown(event, index) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const nextIndex = index + 1;
+            if (nextIndex < selectedQuestionCount) {
+                const nextEl = document.getElementById(`input-${nextIndex}`);
+                if (nextEl) {
+                    nextEl.focus();
+                    nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                // If on last question and Enter is pressed, trigger Check Answers
+                checkAnswers();
             }
         }
     }
-
-    /* Hardware Keyboard Support */
-    document.addEventListener('keydown', (e) => {
-        if (!activeInputEl || isChecked) return;
-        if (e.key >= '0' && e.key <= '9') {
-            pressNum(e.key);
-        } else if (e.key === 'Backspace') {
-            pressBackspace();
-        } else if (e.key === 'Enter' || e.key === 'Tab') {
-            e.preventDefault();
-            focusNextInput();
-        }
-    });
 
     /* Check Answers & Grading Logic */
     function checkAnswers() {
@@ -696,17 +614,17 @@
             const markEl = document.getElementById(`mark-${q.id}`);
             const userVal = parseInt(inputEl.value.trim(), 10);
 
+            inputEl.readOnly = true;
+
             if (userVal === q.answer) {
                 score++;
                 markEl.innerText = '✓';
                 markEl.className = 'q-mark tick';
-                inputEl.style.borderColor = 'var(--correct-color)';
-                inputEl.style.backgroundColor = 'var(--correct-bg)';
+                inputEl.classList.add('correct');
             } else {
                 markEl.innerText = '✕';
                 markEl.className = 'q-mark cross';
-                inputEl.style.borderColor = 'var(--incorrect-color)';
-                inputEl.style.backgroundColor = 'var(--incorrect-bg)';
+                inputEl.classList.add('incorrect');
             }
         });
 
@@ -741,13 +659,10 @@
             badge.style.color = '#c2410c';
         }
 
-        // Hide Numpad & Reveal Evidence Buttons
-        document.getElementById('numpad').style.display = 'none';
+        // Toggle Action Buttons
         document.getElementById('btnCheck').style.display = 'none';
         document.getElementById('btnEvidence').style.display = 'inline-block';
         document.getElementById('btnRestart').style.display = 'inline-block';
-
-        if (activeInputEl) activeInputEl.classList.remove('active');
 
         // Scroll capture area into full view
         document.getElementById('capture-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
